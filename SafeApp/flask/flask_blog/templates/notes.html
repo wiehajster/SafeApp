@@ -1,0 +1,49 @@
+{% extends 'layout.html' %}
+{% block content %}
+    <h1>{{ legend }}</h1>
+    {% for note in notes %}
+        <article class="media content-section">
+            <div class="media-body">
+            <div class="article-metadata">
+                <a class="mr-2">{{ note.author.username }}</a>
+                <small class="text-muted">{{ note.date_posted.strftime('%Y-%m-%d %H:%M:%S') }}</small>
+                {% if note.is_encrypted %}
+                    <small class="text-right"><b>Zaszyfrowana</b></small>
+                {% endif %}
+            </div>
+            {% if note.is_encrypted %}
+                <h2><a class="article-title" href="{{ url_for('decrypt_note', note_id=note.id) }}">{{ note.title }}</a></h2>
+                <p><b>Notatka zaszyfrowana. Wejdź, aby odszyfrować.</b></p>
+            {% elif note.author == current_user %}
+                <h2><a class="article-title" href="{{ url_for('note', note_id=note.id) }}">{{ note.title }}</a></h2>
+                <p class="article-content">{{ note.content }}</p>
+
+                <div>
+                    <button style="vertical-align: middle;" type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Usuń</button>
+                </div>
+                <!-- Modal -->
+                <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel">Czy na pewno chcesz usunąć notatkę?</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        </div>
+                        <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
+                        <form action="{{ url_for('delete_note', note_id=note.id) }}" method="POST">
+                            <input class="btn btn-danger" type="submit" value="Usuń">
+                        </form>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            {% else %}
+                <h2><a class="article-title">{{ note.title }}</a></h2>
+                <p class="article-content">{{ note.content }}</p>
+            {% endif %}
+        </article>
+    {% endfor %}
+{% endblock content %}

@@ -1,0 +1,94 @@
+{% extends 'layout.html' %}
+{% block content %}
+    <!--Notes-->
+    <div class="row justify-content-end">
+        <div class="col-6 left">
+            <h1>Publiczne notatki</h1>
+            {% for note in notes %}
+                <article class="media content-section">
+                    <div class="media-body">
+
+                        <div class="article-metadata">
+                            <a class="mr-2">{{ note.author.username }}</a>
+                            <small class="text-muted">{{ note.date_posted.strftime('%Y-%m-%d %H:%M:%S') }}</small>
+                        </div>
+
+                        {% if current_user == note.author %}
+                            <h2><a class="article-title" href="{{ url_for('note', note_id=note.id) }}">{{ note.title }}</a></h2>
+                        {% else %}
+                            <h2><a class="article-title">{{ note.title }}</a></h2>
+                        {% endif %}
+
+                        <p class="article-content">{{ note.content }}</p>
+
+                        {% if note.author == current_user %}
+                            <div>
+                                <button type="button" class="btn btn-danger btn-sm mt-1 mb-1" data-toggle="modal" data-target="#deleteNote">Usuń</button>
+                            </div>
+                            <!-- Modal -->
+                            <div class="modal fade" id="deleteNote" tabindex="-1" role="dialog" aria-labelledby="deleteNoteLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                    <h5 class="modal-title" id="deleteNoteLabel">Czy na pewno chcesz usunąć notatkę?</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    </div>
+                                    <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
+                                    <form action="{{ url_for('delete_note', note_id=note.id) }}" method="POST">
+                                        <input class="btn btn-danger" type="submit" value="Usuń">
+                                    </form>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+
+        <!--Files-->
+        <div class="col-6 right">
+            <h1>Publiczne pliki</h1>
+            {% for file in files %}
+                <div class="media content-section">
+                    <div class="media-body">
+                    <div class="article-metadata">
+                        <a class="mr-2">{{ file.author.username }}</a>
+                        <small class="text-muted">{{ file.date_sent.strftime('%Y-%m-%d %H:%M:%S') }}</small>
+                    </div>
+                        <a class="article-title">{{ file.show_filename }}</a>
+                        <div>
+                            <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('download_file', file_id=file.id) }}">Pobierz</a>
+                            {% if current_user == file.author %}
+                                <button style="vertical-align: middle;" type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteFile">Usuń</button>
+                                <!-- Modal -->
+                                <div class="modal fade" id="deleteFile" tabindex="-1" role="dialog" aria-labelledby="deleteFileLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                        <h5 class="modal-title" id="deleteFileLabel">Czy na pewno chcesz usunąć plik?</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                        <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
+                                        <form action="{{ url_for('delete_file', file_id=file.id) }}" method="POST">
+                                            <input class="btn btn-danger" type="submit" value="Usuń">
+                                        </form>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock content %}

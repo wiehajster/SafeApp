@@ -1,0 +1,31 @@
+{% extends 'layout.html' %}
+{% block content %}
+    <div class='content-section'>
+        <form method="POST" action="" enctype="multipart/form-data">
+            {{ form.hidden_tag() }} <!--CSRF-->
+            <fieldset class='form-group'>
+                <legend class='border-bottom mb-4'>Upload File</legend>
+                <div class='form-group'>
+                    {{ form.blob.label() }}
+                    {{ form.blob(class="form-control-file") }}
+                    {% if form.blob.errors %}
+                        {% for error in form.blob.errors %}
+                        <span class="text-danger">{{ error }}</span><br>
+                        {% endfor %}    
+                    {% endif %}
+                </div>
+                <div class='form-check'>
+                    {{ form.is_public(class='form-check-input') }}
+                    {{ form.is_public.label(class='form-check-label') }}
+                </div>
+                <div class="form-group">
+                    {{ form.share.label(class='form-control-label', id='share-label') }}
+                    {{ form.share(class='form-control') }}
+                </div>
+            </fieldset>
+            <div class='form-group'>
+                {{ form.submit(class='btn btn-outline-info') }}
+            </div>
+        </form>
+</div>
+{% endblock content %}

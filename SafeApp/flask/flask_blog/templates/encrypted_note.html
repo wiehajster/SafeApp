@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+{% block content %}
+    <article class="media content-section">
+        <div class="media-body">
+            <div class="article-metadata">
+            <a class="mr-2">{{ note.author.username }}</a>
+            <small class="text-muted">{{ note.date_posted.strftime('%Y-%m-%d %H:%M:%S') }}</small>
+            </div>
+            <h2 class="article-title">{{ note.title }}</h2>
+        </div>
+    </article>
+    <div class='content-section'>
+        <form method="POST" action="">
+            {{ form.hidden_tag() }} <!--CSRF-->
+            <fieldset class='form-group'>
+                <legend class='border-bottom mb-4'>Wprowadź hasło, aby odszyfrować notatkę.</legend>
+                    <div class='form-group'>
+                        {{ form.password.label(class='form-control-label') }}
+                        {% if form.password.errors %}
+                        {{ form.password(class='form-control form-control-lg is-invalid')}}
+                        <div class='invalid-feedback'>
+                            {% for error in form.password.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        {{ form.password(class='form-control form-control-lg')}}
+                        {% endif %}
+                    </div>
+                    <div class='form-group'>
+                        {{ form.submit(class='btn btn-outline-info') }}
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+{% endblock content %}
